@@ -17,8 +17,15 @@ export default function LoginPage() {
     try {
       await login(email, password);
       navigate("/threads");
-    } catch {
-      setError("Invalid email or password.");
+    } catch (error) {
+      const status = error.response?.status;
+      if (status === 401) {
+        setError("Invalid email or password.");
+      } else if (status) {
+        setError(`Login service returned an error (HTTP ${status}). Check the server configuration.`);
+      } else {
+        setError("Could not reach the login server. Make sure it is running and try again.");
+      }
     } finally {
       setLoading(false);
     }
